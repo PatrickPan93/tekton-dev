@@ -1,0 +1,11 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: demo-git
+spec:
+  params:
+  - name: url
+    value: https://github.com/PatrickPan93/golang-hello-world
+  - name: revision
+    value: main
+  type: git

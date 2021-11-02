@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: test-sidecar-pipelinerun
+spec:
+  serviceAccountName: build-sa
+  pipelineRef:
+    name: test-sidecar-pipeline
+  resources:
+  - name: demo-git  # 指定输入的git仓库资源
+    resourceRef:
+      name: demo-git
+  params:
+  - name: image
+    value: harbor.devops.com/devops/golang-hello-world

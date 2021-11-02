@@ -1,0 +1,19 @@
+# workspace-mvn-pipelinerun.yaml
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: mvn-pipelinerun
+spec:
+  pipelineRef:
+    name: mvn-pipeline
+  resources:
+  - name: app-git
+    resourceSpec:
+      type: git
+      params:
+        - name: url
+          value: https://github.com/PatrickPan93/spring-petclinic
+  workspaces:
+  - name: local-maven-repo
+    persistentVolumeClaim:
+      claimName: mvn-repo-pvc
