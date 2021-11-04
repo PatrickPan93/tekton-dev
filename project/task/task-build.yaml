@@ -1,0 +1,24 @@
+# task-build.yaml
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: build
+spec:
+  workspaces:
+    - name: go-repo
+      mountPath: /workspace/repo
+  steps:
+    - name: build
+      image: golang:1.16
+      workingDir: /workspace/repo
+      script: |
+        go build -v -o app
+      env:
+        - name: CGO_ENABLED
+          value: "0"
+        - name: GOPROXY
+          value: https://goproxy.cn
+        - name: GOOS
+          value: linux
+        - name: GOARCH
+          value: amd64

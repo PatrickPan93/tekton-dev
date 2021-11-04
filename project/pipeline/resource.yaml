@@ -1,0 +1,63 @@
+# other.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gitlab-auth
+  annotations:
+    tekton.dev/git-0: http://gitlab.devops.com
+type: kubernetes.io/basic-auth
+stringData:
+  username: root
+  password: pzb19930830
+
+---
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: harbor-auth
+  annotations:
+    tekton.dev/docker-0: https://harbor.devops.com
+type: kubernetes.io/basic-auth
+stringData:
+    username: admin
+    password: Harbor12345
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tekton-build-sa
+secrets:
+  - name: harbor-auth
+  - name: gitlab-auth
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: tekton-clusterrole-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+#  name: edit
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: tekton-build-sa
+  namespace: default
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: go-repo-pvc
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  storageClassName: nfs-storageclass  # 使用 StorageClass 自动生成 PV
+  accessModes:
+    - ReadWriteOnce
